@@ -1,0 +1,269 @@
+Utilize o software R para resolver cada um dos seguintes problemas. Note que precisará instalar e carregar
+alguns dos pacotes vistos em aula.
+1) Max: Z = X1 + 2X2, dadas as seguintes restrições:
+• X1 ≤ 2,
+• X2 ≤ 2,
+• X1 + X2 ≤ 3,
+• X1, X2 ≥ 0.
+1)
+>install.packages("boot")
+>install.packages("lpSolve")
+>library(boot)
+>library(lpSolve)
+>funcao_objetiva = c(1, 2)
+>matriz = matrix(c(1, 0, 1, 0, 1, 1), ncol = 2)
+>direita_funcao = c(2, 2 , 3)
+>simplex = simplex(funcao_objetiva, matriz, direita_funcao, maxi = TRUE)
+>simplex$soln
+
+2) Min: Z = 5X1 + 7X2, dadas as seguintes restrições:
+• 2X1 + 3X2 ≥ 42,
+• 3X1 + 4X2 ≥ 60,
+• X1 + X2 ≥ 18,
+• X1, X2 ≥ 0.
+>install.packages("boot")
+>install.packages("lpSolve")
+>library(boot)
+>library(lpSolve) 
+>funcao_objetiva = c(5, 7) 
+>matriz = matrix(c(2, 3, 1, 3, 4 , 1), ncol = 2) 
+>direita_funcao = c(42, 60 , 18) 
+>simplex2 = lp("min", funcao_objetiva, matriz, rep(">=",3),direita_funcao)
+>simplex2$solution
+
+3) Max: Z = 80X1 + 50X2, dadas as seguintes restrições:
+• X1 ≤ 6,
+• X2 ≤ 4,
+• 6X1 + 8X2 ≤ 48,
+• X1, X2 ≥ 0.
+install.packages("boot")
+install.packages("lpSolve")
+>library(boot)
+>library(lpSolve) 
+>funcao_objetiva = c(80, 50) 
+>matriz = matrix(c(1, 0, 6, 0, 1 , 8), ncol = 2) 
+>direita_funcao = c(6, 4 , 48) 
+>simplex = simplex(funcao_objetiva, matriz, direita_funcao, maxi = TRUE)
+>simplex$soln
+
+4) Max: Z = X1 + 2X2, dadas as seguintes restrições:
+• X1 + 3X2 ≤ 8,
+• X1 + X2 ≤ 4,
+• X1, X2 ≥ 0.
+>install.packages("boot")
+>install.packages("lpSolve")
+>library(boot)
+>library(lpSolve) 
+>funcao_objetiva = c(1, 2) 
+>matriz = matrix(c(1, 1, 1, 3), ncol = 2) 
+>direita_funcao = c(8, 4) 
+>simplex = simplex(funcao_objetiva, matriz, direita_funcao, maxi = TRUE)
+>simplex$soln 
+
+5) Max: Z = 5X1 + X2 + 3X3 + 4X4, dadas as seguintes restrições:
+• X1 − 2X2 + 4X3 + 3X3 ≤ 20,
+• −4X1 + 6X2 + 5X3 − 4X4 ≤ 40,
+• 2X1 − 3X2 + 3X3 + 8X4 ≤ 50
+• X1, X2, X3, X4 ≥ 0
+>install.packages("boot")
+>install.packages("lpSolve")
+>library(boot)
+>library(lpSolve) 
+>funcao_objetiva = c(5, 1, 3, 4) 
+>matriz = matrix(c(1, 4, 2, 2, 6, 3, 4, 5, 3, 3, 4, 8), ncol = 4) 
+>direita_funcao = c(20, 40,50) 
+>simplex = simplex(funcao_objetiva, matriz, direita_funcao, maxi = TRUE)
+>simplex$soln
+
+6)A Sorny possui duas fábricas no Brasil produzindo video games que devem ser remetidos a três centros de
+distribuição. O custo de produção são os mesmos em ambas as fábricas e o custo (em reais) de transporte
+por lote é mostrado na Tabela a seguir.
+
+Fábrica / CD CD1 CD2 CD3
+F1        800 700 400
+F2        600 800 500
+
+Cada fábrica é capaz de produzir, no máximo, 50 lotes por mês. Para satisfazer a procura por video games,
+cada centro de distribuição precisa de, exatamente, 20 lotes por mês. A Sorny está interessaa em saber como
+enviar os lotes de forma a minimizar o custo total de transporte.
+>library(lpSolve)
+>matriz_custos = matrix(c(800, 600, 700, 800, 400, 500), ncol = 3, nrow = 2)
+>s_sinal = rep("=", 3)
+>s_valores = c(20, 20, 20)
+>d_sinal = rep("<=", 2)
+>d_valores = c(50, 50)
+>resultados = lp.transport(matriz_custos, "min", row.signs = d_sinal, row.rhs = d_valores, col.signs = s_sinal, col.rhs = s_valores)
+>resultados$solution
+>resultados 
+
+7)A empresa Baby Boomers possui três fábricas que produzem carrinhos de bebê que devem ser remetidos para
+quatro centros de distribuição. As fábricas 1, 2 e 3 produzem 12, 17 e 11 remessas por mês, respectivamente.
+Cada centro de distribuição precisa receber 10 remessas por mês. A distância entre cada fábrica e os
+respectivos centros de distribuição é apresentado na Tabela abaixo.
+
+Fábrica / CD CD1 CD2  CD 3   CD 4
+F1      800km  1300km  400km 700km
+F2      1100km 1400km 600km 1000km
+F3      600km 1200km  800km 900km
+
+O custo do frete por remessa é de R.100 mais 50 centavos por km. A Baby Boomers está interessada em
+transportar as remessas de forma que o custo de transporte entre as fábricas e centros de distribuição seja
+mínimo. Escreva quantas remessas de cada fábrica devem ser enviadas a cada centro de distribuição e qual
+será o custo final do frete para tender as demandas da Baby Boomers. Dica: precisará reformular a
+Tabela
+>library(lpSolve)
+>matriz = matrix(c(500, 650, 400, 750, 800, 700,300,400,500,450,600,550), ncol = 4, nrow = 3)
+vs_sinal = rep("=", 4)
+>s_valores = c(10, 10, 10,10)
+>d_sinal = rep("<=", 3)
+>d_valores = c(12, 17, 11)
+>resultados = lp.transport(matriz, "min", row.signs = d_sinal, row.rhs = d_valores, col.signs = s_sinal, col.rhs = s_valores)
+>resultados$solution
+>resultados
+
+8)Pedro, Tiago, João e Henrique trabalham para Alexandre Gustave Eiffel na construção da Torre Eiffel. Para
+finalizar a primeira etapa da construção 4 tarefas são necessárias. Os quatro funcionários são capazes de
+fazer qualquer uma das quatro tarefas mas cada tarefa deve ser realizada unicamente por uma pessoa. O
+número de horas necessárias por cada um dos funcionários realizarem cada uma das tarefas são apresentadas
+na Tabela a seguir.
+
+Funcionário/Tarefa   T1 T2 T3  T4
+Pedro                 4  6  5  5
+Tiago                 7  4  5  6
+João                  4  7  6  4
+Henrique              5  3  4  7
+
+Como deve Gustave Eiffel atribuir as tarefas aos funcionários para terminar a primeira etapa da construção o
+mais rápido possível? qual é o número de horas necessário?
+>matriz_custos = matrix(c(4, 7, 4, 5, 6, 4,7,3,5,5,6,4,5,6,4,7), ncol = 4, nrow = 4)
+>s_sinal = rep("=", 4)
+>s_valores = c(1, 1, 1,1)
+>d_sinal = rep("=", 4)
+>d_valores = c(1, 1, 1,1)
+>resultados = lp.transport(matriz_custos, "min", row.signs = d_sinal, row.rhs = d_valores, col.signs = s_sinal, col.rhs = s_valores)
+>resultados$solution
+>resultados 
+
+9)O grafo abaixo apresenta 6 oleodutos utilizados para transportar óleo do Campo do produtor para as refinarias,
+bem como as capacidades máximas de óleo que podem ser transportadas entre duas estações.
+imagem :https://prnt.sc/i6R6bJM_CEXl
+Qual o percurso que deve utilizado para que a maior quantidade óleo chegue até a refinária?
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("CAMPO", "A", 8), 
+          c("CAMPO", "B", 10), 
+          c("A", "C", 2), 
+          c("A", "D", 6), 
+          c("A", "B", 4), 
+          c("B", "C", 5), 
+          c("B", "D", 3), 
+          c("C", "REFINARIA", 7), 
+          c("C", "D", 6),
+          c("D", "REFINARIA", 12))
+>colnames(E) = c("de", "para", "capacity") 
+>rede = as.data.frame(E)
+>grafo = graph_from_data_frame(rede)
+>resultados = max_flow(grafo, source = V(grafo)["CAMPO"], target = V(grafo)["REFINARIA"])
+>resultados$flow
+
+10)Evandro é carioca e recentemente mudou para Chapeco/RS a trabalho. Ele foi convidado para dar uma
+palestra em Porto Alegre/RS, mas por ser novo na região não sabe qual o melhor caminho para se locomover
+desde Chapecó para Porto Alegre. O grafo abaixo, apresenta os km que o carro deve percorrer entre cidades
+vizinhas até chegar em Porto Alegre.
+imagem:https://prnt.sc/aA0ehXPKsOc3
+Ajude o Evandro a descobrir qual o caminho mais curto a seguir para chegar de Chapecó até Porto Alegre.
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("C", "J", 400), 
+          c("C", "L", 950), 
+          c("C", "JOI", 800), 
+          c("J", "CS", 1800),
+          c("J", "F", 900),
+          c("L", "CS", 1100),
+          c("L", "F", 600),
+          c("JOI", "F", 600), 
+          c("JOI", "S", 1200), 
+          c("CS", "F", 900), 
+          c("CS", "POA", 400),
+          c("F", "POA", 1300),
+          c("F", "S", 1000),
+          c("S", "POA", 600))
+>colnames(E) = c("DE", "PARA", "weight") 
+>rede = data.frame(E)
+>g = graph_from_data_frame(rede)
+>resultados = get.shortest.paths(g, from = V(g)["C"], to = V(g)["POA"])
+>distances(g, v = V(g)["C"], to = V(g)["POA"])
+>resultados$vpath 
+
+11) El rápido voador linhas aéreas esta prestes a decolar de Seattle (SE) com destino a Londres (LN). O Tempo
+(em horas) das possíveis rotas a serem tomadas é apresentado a seguir.
+imagem: https://prnt.sc/iDUDpVHCBYny
+Qual percurso deveria ser percorrido se o piloto deseja chegar em Londres o mais rápido possível? (e quanto
+tempo isto levaria?)
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("SE", "A", 4.6), 
+          c("SE", "B", 4.7), 
+          c("SE", "C", 4.2), 
+          c("A", "D", 3.5),
+          c("A", "E", 3.4),
+          c("B", "D", 3.6),
+          c("B", "E", 3.2),
+          c("B", "F", 3.3), 
+          c("C", "E", 3.5), 
+          c("C", "F", 3.4), 
+          c("D", "LN", 3.4),
+          c("E", "LN", 3.6),
+          c("F", "LN", 3.8))
+>colnames(E) = c("DE", "PARA", "weight") 
+>rede = data.frame(E)
+>g = graph_from_data_frame(rede)
+>resultados = get.shortest.paths(g, from = V(g)["SE"], to = V(g)["LN"])
+>distances(g, v = V(g)["SE"], to = V(g)["LN"])
+>resultados$vpath
+
+12)O banco Muubank deseja conectar terminais de computador em cada uma das agências ao computador da
+sede central (ou matriz). A conexão será feita vía cabos de rede especiais e super costosos. Sabe-se que a
+conexão não precisa ser direta (agência-matriz), sendo totalmente possível que, digamos, um terminal de
+computador esteja conectado a outro terminal que, por sua vez, esteja conectado com a sede central (a única
+exigência é que cada filial esteja conectada através de alguma rota à sede matriz).
+A distância (em km) entre cada par de agências é a seguinte.
+
+Matriz B1 B2 B3 B4 B5
+Matriz 0 190 70 115 270 160
+B1    190 0 100 110 215 50
+B2    70 100 0 140 120 220
+B3    115 110 140 0 175 80
+B4    270 215 120 175 0 310
+B5    160 50 220 80 310 0
+
+A gerência deseja determinar quais pares de agências devem estar conectados diretamente através dos cabos
+de rede especiais de modo a conectar todas as filiais (direta ou indiretamente) à matriz a um custo total
+mínimo (repare-se que a maior/menor distância maior/menor será o custo gasto com cabeamento). Dica:
+transforme a informação contida na tabela em um grafo e utilize o problema da árvore de
+expansão mínima.
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("M", "B4", 270), 
+          c("M", "B3", 115), 
+          c("M", "B2", 70), 
+          c("M", "B5", 160),
+          c("M", "B1", 190),
+          c("B1", "B2", 100),
+          c("B1", "B3", 110),
+          c("B1", "B4", 215), 
+          c("B1", "B5", 50), 
+          c("B2", "B3", 140), 
+          c("B2", "B4", 120),
+          c("B2", "B5", 220),
+          c("B3", "B4",175),
+          c("B3", "B5", 80), 
+          c("B4", "B5", 310))
+>colnames(E) = c("No1", "No2", "weight")
+>rede = as.data.frame(E)
+>g = graph_from_data_frame(rede, directed = FALSE)
+>g_mst = mst(g)
+>plot(g_mst, edge.label = E(g_mst)$weight)
+>sum(as.numeric(E(g_mst)$weight))
+
+
