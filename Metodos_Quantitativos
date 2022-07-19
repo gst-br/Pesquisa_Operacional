@@ -266,4 +266,129 @@ expansão mínima.
 >plot(g_mst, edge.label = E(g_mst)$weight)
 >sum(as.numeric(E(g_mst)$weight))
 
+Prova 2 Métodos Quantitativos:
+Questão 1 (2.5 pontos)
+Encontre a solução ótima do seguinte problema de programação linear:
+Min: Z = 3X1 + 2X2 + 4X3,
+
+sujeito às seguintes restrições
+• 2X1 + X2 + 3X3 = 60,
+• 3X1 + 3X2 + 5X3 ≥ 120,
+• X1, X2, X2 ≥ 0
+install.packages("lpSolve")
+install.packages("boot")
+>library(lpSolve) 
+>library(boot)
+>funcao_objetiva = c(3, 2, 4) 
+>matriz = matrix(c(2, 3, 1, 3, 3 , 5), ncol = 3) 
+>direita_funcao = c(60, 120) 
+>simplex2 = lp("min", funcao_objetiva, matriz, rep("=",1), direita_funcao)
+>simplex2$solution
+>simplex2
+#Respost. a solução ótima: x1 = 0, x2 = 15, x3 = 15, e a minimização da função objetiva é de 90.
+
+Questão 2 (2.5 pontos)
+A empresa Baby Boomers possui três fábricas que produzem carrinhos de bebê que devem ser remetidos para
+quatro centros de distribuição. As fábricas 1, 2 e 3 tem capacidade para produzir 20, 30 e 18 remessas por
+mês, respectivamente. Cada centro de distribuição precisa receber 12 remessas por mês. A distância entre
+cada fábrica e os respectivos centros de distribuição é apresentado na Tabela abaixo.
+Fábrica / CD CD1 CD2 CD 3 CD 4
+F1 900km 1300km 500km 700km
+F2 1100km 1400km 600km 1000km
+F3 600km 1000km 800km 900km
+
+O custo do frete por remessa é de R.100 mais 70 centavos por km. A Baby Boomers está interessada em
+transportar as remessas de forma que o custo de transporte entre as fábricas e centros de distribuição seja
+mínimo. Escreva quantas remessas de cada fábrica devem ser enviadas a cada centro de distribuição e qual
+será o custo final do frete para tender as demandas da Baby Boomers.
+#Nova Tabela
+#(Fábrica/CD) CD1 CD2 CD 3 CD 4       (#Fábrica/CD)  CD1   CD2    CD 3    CD 4    
+#F1 900km   1300km 500km 700km                #F1  730x1 1010x2 450x3  590x4
+#F2 1100km  1400km 600km 1000km      --->     #F2  870x5 1080x6 520x7  800x8
+#F3 600km   1000km 800km 900km                #F3  520x9 800x10 660x11 730x12
+>library(lpSolve)
+>matriz= matrix(c(730, 870, 520, 1010, 1080, 800,450,520,660,590,800,730), ncol = 4, nrow = 3)
+>b_sinal = rep("=", 4)
+>b_valores = c(12, 12, 12,12)
+>d_sinal = rep("<=", 3)
+>d_valores = c(20, 30, 18)
+>resultados = lp.transport(matriz, "min", row.signs = d_sinal, row.rhs = d_valores, col.signs = b_sinal, col.rhs = b_valores)
+>resultados$solution
+>resultados
+#Respost. Da fabrica 1 e da fabrica 3 serão enviadas respectivamente 6 e 6 remessas para o centro de distribuição 1, da fabrica 3 
+sera enviada 12 remessas para o centro de distribuição 2, da fábrica 1 e da fabrica 2 será enviado respectivamente 2 e 10 remessas 
+para o centro de distribuição 3, da fabrica 1 sera enviado 12 remessas para o centro de distribuição 4. O custo final da empresa Baby Boomers 
+será de R$30.280,00
+
+Questão 3 (2.5 pontos)
+A marca de computadores “Dell” possui fábricas em Recife e Manaus, sendo seus principais centros de
+distribuição em São Paulo e Rio de Janeiro. Com a crescente demanda de computadores, a empresa
+deseja enviar a maior quantidade possível de lotes para os centros de distribuição mas, devido a limitações
+logísticas, as rotas de envio possuem algumas limitações quanto à capacidade máxima de lotes que podem ser
+transportados. O gráfico abaixo apresenta as capacidades máximas das rotas.
+https://prnt.sc/XNx-xh2QEsxP
+Se a Dell precisa executar um plano rapidamente para enviar a maior quantidade de lotes de ambas as fábricas
+para ambos os centros de distribuição, qual seria sua sugestão? (Quantos lotes chegarão em São Paulo e
+quanto no Rio de Janeiro?)
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("V_FANTASMA_A", "Recife", 27), 
+           c("V_FANTASMA_A", "Manaus", 30), 
+           c("Recife", "Salvador", 12), 
+           c("Recife", "Brasilia", 15), 
+           c("Manaus", "Brasilia", 20), 
+           c("Manaus", "Cuiaba", 10),
+          c("Cuiaba", "Brasilia", 5),
+           c("Salvador", "Brasilia", 5), 
+           c("Salvador", "Campo_Grande", 15), 
+           c("Brasilia", "Campo_Grande", 18),
+           c("Brasilia", "Ribeirão_Preto", 30),
+           c("Brasilia", "Belo_Horizonte", 20),
+           c("Campo_Grande", "Sao_Paulo", 2),
+           c("Campo_Grande", "Ribeirão_Preto", 15),
+           c("Ribeirão_Preto", "Sao_Paulo", 30),
+           c("Ribeirão_Preto", "Rio_de_Janeiro", 40),
+           c("Belo_Horizonte", "Ribeirão_Preto", 20),
+           c("Belo_Horizonte", "Rio_de_Janeiro",5),
+           c("Sao_Paulo", "V_FANTASMA_B", 32),
+           c("Rio_de_Janeiro", "V_FANTASMA_B", 45))
+>colnames(E) = c("de", "para", "capacity") 
+>rede = as.data.frame(E)
+>grafo = graph_from_data_frame(rede)
+>resultados = max_flow(grafo, source = V(grafo)["V_FANTASMA_A"], target = V(grafo)["V_FANTASMA_B"])
+>resultados$flow
+>resultados$value
+>plot(grafo,edge.label = resultados$flow)
+#Respost. Baseado no plot, a sugestão é que deva  sair 27 unidades de Recife e 25 de Manaus e levar 45 
+ao Rio de Janeiro e 7 para Sao Paulo, para se alcançar  a quantidade maxima de lotes dessas fábricas em 
+direção os centros de distribuição.
+
+Questão 4 (2.5) pontos
+El Gato Volador linhas aéreas esta prestes a decolar de Nova Iorque (NY) com destino a Londres (LN). O
+Tempo (em horas) das possíveis rotas a serem tomadas é apresentado a seguir.
+https://prnt.sc/Q13528ikMec2
+Qual percurso deveria ser percorrido se o piloto deseja chegar em Londres o mais rápido possível? (e quanto
+tempo isto levaria?
+>install.packages("igraph")
+>library(igraph)
+>E = rbind(c("NY", "A", 5), 
+           c("NY", "B", 4.5), 
+           c("NY", "C", 4.3), 
+           c("A", "D", 4.2),
+           c("A", "E", 3.5),
+           c("B", "D", 3.6),
+           c("B", "E", 3.3),
+           c("B", "F", 3.5), 
+           c("C", "E", 3.6), 
+           c("C", "F", 4), 
+           c("D", "LN", 4),
+           c("E", "LN", 7),
+           c("F", "LN", 6))
+>colnames(E) = c("DE", "PARA", "weight") 
+>rede = data.frame(E)
+>g = graph_from_data_frame(rede)
+>resultados = get.shortest.paths(g, from = V(g)["NY"], to = V(g)["LN"])
+>distances(g, v = V(g)["NY"], to = V(g)["LN"])
+>resultados$vpath
+#Respost. o percurso a ser percorrido deve ser NY>B>D>LN  e demorará cerca de 12.1 horas.
 
